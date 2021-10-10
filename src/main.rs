@@ -5,9 +5,8 @@ use log::{info, warn};
 use simple_logger::SimpleLogger;
 use std::fs;
 use std::fs::File;
-use std::io::{BufWriter, stdin, Write};
+use std::io::{stdin, BufWriter, Write};
 use std::path::Path;
-
 
 ///
 /// Address to string. Rule:
@@ -21,8 +20,7 @@ fn addresses_to_string(addresses: Box<[Address]>) -> String {
         0 => String::new(),
         1 => addresses.get(0).unwrap().to_string(),
         _ => {
-            let mut addresses: Vec<String> =
-                addresses.into_iter().map(|a| a.to_string()).collect();
+            let mut addresses: Vec<String> = addresses.into_iter().map(|a| a.to_string()).collect();
             // sort addresses
             addresses.sort();
             addresses.join("-")
@@ -31,7 +29,6 @@ fn addresses_to_string(addresses: Box<[Address]>) -> String {
 }
 
 fn main() {
-
     // start logger
     SimpleLogger::new().init().unwrap();
 
@@ -39,7 +36,9 @@ fn main() {
     let db = loop {
         println!("enter path to bitcoin directory (--datadir):");
         let mut db_path = String::new();
-        stdin().read_line(&mut db_path).expect("failed to read user input");
+        stdin()
+            .read_line(&mut db_path)
+            .expect("failed to read user input");
         let db_path = Path::new(db_path.trim());
         if !db_path.exists() {
             warn!("bitcoin path: {} not found", db_path.display());
@@ -48,7 +47,7 @@ fn main() {
             Ok(db) => {
                 break db;
             }
-            Err(_) => continue
+            Err(_) => continue,
         }
     };
 
@@ -57,7 +56,9 @@ fn main() {
     // create output path
     println!("enter a directory as output folder (use absolute path!):");
     let mut out_dir = String::new();
-    stdin().read_line(&mut out_dir).expect("failed to read user input");
+    stdin()
+        .read_line(&mut out_dir)
+        .expect("failed to read user input");
     let out_dir = loop {
         let out_dir = Path::new(out_dir.trim());
         if !out_dir.exists() {
@@ -65,7 +66,7 @@ fn main() {
                 Ok(_) => {
                     break out_dir;
                 }
-                Err(_) => continue
+                Err(_) => continue,
             }
         }
     };
@@ -78,8 +79,8 @@ fn main() {
     let mut input_writer = BufWriter::new(inputs);
 
     // write header
-    write!(out_writer, "{}", table_header).expect("failed to write header to output.csv");
-    write!(input_writer, "{}", table_header).expect("failed to write header to input.csv");
+    write!(out_writer, "{}\n", table_header).expect("failed to write header to output.csv");
+    write!(input_writer, "{}\n", table_header).expect("failed to write header to input.csv");
 
     // preparing progress bar
     // compute the total number of transactions (for displaying progress)
@@ -101,12 +102,14 @@ fn main() {
             for input in tx.input {
                 let address = addresses_to_string(input.addresses);
                 let value = input.value;
-                write!(input_writer, "{},{},{}\n", time_stamp, address, value).expect("failed to write to input.csv");
+                write!(input_writer, "{},{},{}\n", time_stamp, address, value)
+                    .expect("failed to write to input.csv");
             }
             for output in tx.output {
                 let address = addresses_to_string(output.addresses);
                 let value = output.value;
-                write!(out_writer, "{},{},{}\n", time_stamp, address, value).expect("failed to write to output.csv");
+                write!(out_writer, "{},{},{}\n", time_stamp, address, value)
+                    .expect("failed to write to output.csv");
             }
         }
         bar.inc(len as u64)
