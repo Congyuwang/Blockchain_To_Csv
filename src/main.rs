@@ -74,7 +74,7 @@ fn main() {
     // create output files
     let outputs = File::create(out_dir.join("output.csv")).expect("failed to create output.csv");
     let inputs = File::create(out_dir.join("input.csv")).expect("failed to create input.csv");
-    let table_header = "timestamp,address,value\n";
+    let table_header = "timestamp,address,value";
     let mut out_writer = BufWriter::new(outputs);
     let mut input_writer = BufWriter::new(inputs);
 
