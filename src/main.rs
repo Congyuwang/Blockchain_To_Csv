@@ -54,12 +54,12 @@ fn main() {
     info!("launching DB finished");
 
     // create output path
-    println!("enter a directory as output folder (use absolute path!):");
-    let mut out_dir = String::new();
-    stdin()
-        .read_line(&mut out_dir)
-        .expect("failed to read user input");
     let out_dir = loop {
+        println!("enter a directory as output folder (use absolute path!):");
+        let mut out_dir = String::new();
+        stdin()
+            .read_line(&mut out_dir)
+            .expect("failed to read user input");
         let out_dir = Path::new(out_dir.trim());
         if !out_dir.exists() {
             match fs::create_dir_all(out_dir) {
